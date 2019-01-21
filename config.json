@@ -1,0 +1,5 @@
+{
+  "mongoDBHost": "mongodb://127.0.0.1:27017",
+  "mongoDBName": "ToDo",
+  "jwtSecret": "Ebal tvoyu mamu v rot, mamu mamy v rot ebal i babushku mamy v rot ebal!"
+}
