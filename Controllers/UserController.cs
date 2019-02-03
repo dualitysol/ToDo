@@ -20,17 +20,19 @@ namespace ToDo.Controllers
     [ApiController]
     public class UserController : Controller
     {
-        private UserModel userModel = new UserModel();
+        // private UserService service = new UserService();
         private readonly IUserService _userService;
-        // GET api/values
+        public UserController(IUserService userService)
+        {
+            _userService = userService;
+        }
+        
         [HttpGet]
-        public ActionResult<IEnumerable<UserClass>> Get() => userModel.findAll();
+        public ActionResult<IEnumerable<UserClass>> Get() => _userService.findAll();
 
-        // GET api/values/5
         [HttpGet("{id}")]
-        public ActionResult<UserClass> Get(string id) => userModel.find(id);
+        public ActionResult<UserClass> Get(string id) => _userService.find(id);
 
-        // POST api/values
         [AllowAnonymous]
         [HttpPost]
         public JsonResult SighUp([FromBody] UserClass user)
@@ -43,7 +45,7 @@ namespace ToDo.Controllers
             try
             {
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-                userModel.create(user);
+                _userService.create(user);
                 var response = new JsonResult(user);
                 response.StatusCode = 201;
                 return response;
@@ -61,9 +63,11 @@ namespace ToDo.Controllers
         [Produces("application/json")]
         public JsonResult SighIn([FromBody] UserClass body)
         {
+            //Console.WriteLine("UserDATA: ");
+            //Console.WriteLine(ClaimTypes.NameIdentifier);
             try
             {
-                UserClass user = userModel.findByEmail(body.Email);
+                UserClass user = _userService.findByEmail(body.Email);
 
                 var verifyPass = BCrypt.Net.BCrypt.Verify(body.Password, user.Password);
                 if (!verifyPass) throw new Exception("Password or email is incorrect!");
@@ -74,7 +78,7 @@ namespace ToDo.Controllers
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                     {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
+                        new Claim(ClaimTypes.Name, user.Id.ToString())
                     }),
                     Expires = DateTime.UtcNow.AddDays(7),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -98,14 +102,71 @@ namespace ToDo.Controllers
             }
         }
 
-        // PUT api/values/5
+        [HttpPost("{id}/task")]
+        public JsonResult CreateTask(string id, [FromBody] TaskClass task)
+        {          
+            try
+            {
+                UserClass user = _userService.CreateTask(id, task);
+                var response = new JsonResult(user);
+                response.StatusCode = 200;
+                return response;
+            }
+            catch (Exception error)
+            {
+                var response = new JsonResult(error.Message);
+                Console.WriteLine(error);
+                response.StatusCode = 404;
+                return response;
+            }
+        }
+
+        [HttpPut("{id}/task")]
+        public JsonResult ChangeTaskState(string id, [FromBody] TaskClass task)
+        {
+            try
+            {
+                UserClass user = _userService.ChangeTaskState(id, task);
+                var response = new JsonResult(user);
+                response.StatusCode = 200;
+                return response;
+            }
+            catch (Exception error)
+            {
+                var response = new JsonResult(error.Message);
+                Console.WriteLine("Error: ");
+                Console.WriteLine(error.Message);
+                response.StatusCode = 404;
+                return response;
+            }
+        }
+
+        [HttpDelete("{id}/task/{taskId}")]
+        public JsonResult DeleteTask(string id, string taskId)
+        {
+            try
+            {
+                UserClass user = _userService.DeleteTaskById(id, taskId);
+                var response = new JsonResult(user);
+                response.StatusCode = 204;
+                return response;
+            }
+            catch (Exception error)
+            {
+                var response = new JsonResult(error.Message);
+                Console.WriteLine("Error: ");
+                Console.WriteLine(error.Message);
+                response.StatusCode = 400;
+                return response;
+            }
+        }
+
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] UserClass body)
         {
             
         }
 
-        // DELETE api/values/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {

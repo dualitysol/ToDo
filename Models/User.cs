@@ -23,61 +23,57 @@ namespace ToDo.Models
         [BsonElement("password")]
         public string Password { get; set; }
         [BsonElement("taskList")]
-        public string[] TaskList { get; set; }
+        public List<TaskClass> TaskList { get; set; }
         public string Token { get; set; }
+
+        public UserClass ()
+        {
+            if (this.TaskList == null) this.TaskList = new List<TaskClass>();
+        }
     }
 
-    public class UserModel
+    public class TaskClass
     {
-        private MongoClient mongoClient;
-        private IMongoCollection<UserClass> userCollection;
+        [BsonId]
+        public ObjectId Id { get; set; }
+        [BsonElement("Title")]
+        public string Title { get; set; }
+        [BsonElement("Description")]
+        public string Description { get; set; }
+        [BsonElement("Status")]
+        public string Status { get; private set; }
 
-        public UserModel()
+        public TaskClass(string id, string Title, string Description, string Status)
         {
-            mongoClient = new MongoClient(ConfigurationManager.AppSetting["mongoDBHost"]);
-            var db = mongoClient.GetDatabase(ConfigurationManager.AppSetting["mongoDBName"]);
-            userCollection = db.GetCollection<UserClass>("users");
+
+            Console.WriteLine("From TaskClass:");
+            if (Title == null) throw new Exception("Provide title");
+            // if (UserId == null) throw new Exception("Provide UserId");
+            if (Status == null) Status = "To Do";
+            if (id == null) this.Id = ObjectId.GenerateNewId();
+            if (id is string) this.Id = ObjectId.Parse(id);
+            this.Title = Title;
+            this.Description = Description;
+            this.Status = Status;
+            Console.WriteLine("ID: " + this.Id);
+            Console.WriteLine("Title: " + this.Title);
+            Console.WriteLine("Description: " + this.Description);
+            Console.WriteLine("Status: " + this.Status);
         }
 
-        public List<UserClass> findAll()
+        public void ToDo()
         {
-            return userCollection.AsQueryable<UserClass>().ToList();
+            this.Status = "To Do";
         }
 
-        public UserClass find(string id)
+        public void InProgress()
         {
-            var userId = new ObjectId(id);
-            return userCollection.AsQueryable<UserClass>().SingleOrDefault(a => a.Id == userId);
+            this.Status = "In Progress";
         }
 
-        public UserClass findByEmail(string email) => userCollection.AsQueryable<UserClass>().SingleOrDefault(a => a.Email == email);
-
-        public void create(UserClass user) 
+        public void Done()
         {
-            var sameEmailUser = this.findByEmail(user.Email);
-            if (sameEmailUser != null)
-            {
-                throw new Exception("User with current email already exists!");
-            } else
-            {
-                userCollection.InsertOne(user);
-            };
-        }
-
-        public void update(UserClass user)
-        {
-            userCollection.UpdateOne(
-                Builders<UserClass>.Filter.Eq("_id", user.Id),
-                Builders<UserClass>.Update
-                    .Set("username", user.UserName)
-                    .Set("email", user.Email)
-                    .Set("password", user.Password)
-            );
-        }
-
-        public void delete(UserClass user)
-        {
-            userCollection.DeleteOne(Builders<UserClass>.Filter.Eq("_id", user.Id));
+            this.Status = "Done";
         }
     }
 }

@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ToDo.Middleware;
 using ToDo.Models;
+using ToDo.Services;
 
 namespace ToDo
 {
@@ -44,9 +45,9 @@ namespace ToDo
                 {
                     OnTokenValidated = context =>
                     {
-                        var userModel = context.HttpContext.RequestServices.GetRequiredService<UserModel>();
+                        var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
                         var userId = context.Principal.Identity.Name;
-                        var user = userModel.find(userId);
+                        var user = userService.find(userId);
                         if (user == null)
                         {
                             // return unauthorized if user no longer exists
@@ -67,7 +68,7 @@ namespace ToDo
             });
 
             // configure DI for application services
-            services.AddScoped<UserModel>();
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -85,8 +86,9 @@ namespace ToDo
                        .AllowAnyHeader()
                        .AllowCredentials());
             //app.UseMiddleware<MaintainCorsHeadersMiddleware>();
-            app.UseMvc();
+            
             app.UseAuthentication();
+            app.UseMvc();
         }
     }
     static class ConfigurationManager

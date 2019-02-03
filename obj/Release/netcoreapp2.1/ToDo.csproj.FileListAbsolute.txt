@@ -1,0 +1,13 @@
+C:\Users\Artem\source\repos\ToDo\ToDo\bin\Release\netcoreapp2.1\ToDo.deps.json
+C:\Users\Artem\source\repos\ToDo\ToDo\bin\Release\netcoreapp2.1\ToDo.runtimeconfig.json
+C:\Users\Artem\source\repos\ToDo\ToDo\bin\Release\netcoreapp2.1\ToDo.runtimeconfig.dev.json
+C:\Users\Artem\source\repos\ToDo\ToDo\bin\Release\netcoreapp2.1\ToDo.dll
+C:\Users\Artem\source\repos\ToDo\ToDo\bin\Release\netcoreapp2.1\ToDo.pdb
+C:\Users\Artem\source\repos\ToDo\ToDo\obj\Release\netcoreapp2.1\ToDo.csproj.CoreCompileInputs.cache
+C:\Users\Artem\source\repos\ToDo\ToDo\obj\Release\netcoreapp2.1\ToDo.RazorAssemblyInfo.cache
+C:\Users\Artem\source\repos\ToDo\ToDo\obj\Release\netcoreapp2.1\ToDo.RazorAssemblyInfo.cs
+C:\Users\Artem\source\repos\ToDo\ToDo\obj\Release\netcoreapp2.1\ToDo.AssemblyInfoInputs.cache
+C:\Users\Artem\source\repos\ToDo\ToDo\obj\Release\netcoreapp2.1\ToDo.AssemblyInfo.cs
+C:\Users\Artem\source\repos\ToDo\ToDo\obj\Release\netcoreapp2.1\ToDo.RazorTargetAssemblyInfo.cache
+C:\Users\Artem\source\repos\ToDo\ToDo\obj\Release\netcoreapp2.1\ToDo.dll
+C:\Users\Artem\source\repos\ToDo\ToDo\obj\Release\netcoreapp2.1\ToDo.pdb
